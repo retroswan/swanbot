@@ -1,0 +1,24 @@
+{
+  "name": "swanbot",
+  "version": "1.0.0",
+  "main": "bot.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/retroswan/swanbot.git"
+  },
+  "author": "retroswan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/retroswan/swanbot/issues"
+  },
+  "homepage": "https://github.com/retroswan/swanbot#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ws": "^8.18.0"
+  }
+}
