@@ -6,7 +6,7 @@ export async function getSixteenStarPB() {
     return `Super Mario 64 16 Star PB: ${sixteen}`;
 }
 
-async function getPBMap(user) {
+export async function getPBMap(user) {
     const leadingZeroes = (n) => {
         if (n < 10) {
             n = `0${n}`;
