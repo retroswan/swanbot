@@ -20,6 +20,6 @@ export default async function sendChatMessage(userId, chatMessage) {
         console.error("Failed to send chat message");
         console.error(data);
     } else {
-        console.log("Sent chat message: " + chatMessage);
+        console.log(`Sent chat message to ${userId}: ${chatMessage}`);
     }
 }

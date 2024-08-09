@@ -10,7 +10,8 @@ export default async function handleChatMessage(event) {
         // FIXME: this could be a problem for e.g. emoji, or other unicode
         .replace(/[^\x00-\x7F]/g, "")
         .trim();
-    const [ command ] = msg.split(' ');
+    const splitted = msg.split(' ');
+    const command = splitted.shift();
     
     const commands = new Map([
         [
@@ -41,10 +42,14 @@ export default async function handleChatMessage(event) {
         ],
         [
             '!aura',
-            () => sendChatMessage(
-                event.broadcaster_user_id,
-                getAura(event.chatter_user_name)
-            ),
+            () => {
+                const name = splitted[0] || event.chatter_user_name;
+                
+                sendChatMessage(
+                    event.broadcaster_user_id,
+                    getAura(name)
+                );
+            }
         ],
     ]);
     
