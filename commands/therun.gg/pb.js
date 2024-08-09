@@ -1,10 +1,4 @@
-export async function getSixteenStarPB() {
-    const pbs = await getPBMap('retroswan');
-    
-    const sixteen = pbs.get('Super Mario 64').get('16 Star');
-    
-    return `Super Mario 64 16 Star PB: ${sixteen}`;
-}
+import asciiAlphabet from "../../utilities/asciiAlphabet.js";
 
 export async function getPBMap(user) {
     const leadingZeroes = (n) => {
@@ -41,11 +35,12 @@ export async function getPBMap(user) {
     const games = new Map();
     
     data.map(pb => {
-        if (!games.has(pb.game)) {
-            games.set(pb.game, new Map());
+        const game = asciiAlphabet(pb.game);
+        if (!games.has(game)) {
+            games.set(game, new Map());
         }
         
-        games.get(pb.game).set(pb.run, pbFunc(pb.personalBest));
+        games.get(game).set(pb.run, pbFunc(pb.personalBest));
     });
     
     return games;

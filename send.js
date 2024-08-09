@@ -1,8 +1,6 @@
-import { BOT_USER_ID, OAUTH_TOKEN, CLIENT_ID, CHAT_CHANNEL_USER_ID } from './config.js';
+import { BOT_USER_ID, OAUTH_TOKEN, CLIENT_ID } from './config.js';
 
-let counter = 0;
-
-export default async function sendChatMessage(chatMessage) {
+export default async function sendChatMessage(userId, chatMessage) {
     let response = await fetch('https://api.twitch.tv/helix/chat/messages', {
         method: 'POST',
         headers: {
@@ -11,9 +9,9 @@ export default async function sendChatMessage(chatMessage) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            broadcaster_id: CHAT_CHANNEL_USER_ID,
+            broadcaster_id: userId,
             sender_id: BOT_USER_ID,
-            message: `${chatMessage} [${++counter}]`
+            message: chatMessage,
         })
     });
 

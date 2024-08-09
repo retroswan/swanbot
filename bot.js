@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import handleChatMessage from './read.js'
-import { BOT_USER_ID, OAUTH_TOKEN, CLIENT_ID, CHAT_CHANNEL_USER_ID, EVENTSUB_WEBSOCKET_URL } from './config.js';
+import { BOT_USER_ID, OAUTH_TOKEN, CLIENT_ID, CHAT_CHANNEL_USER_IDS, EVENTSUB_WEBSOCKET_URL } from './config.js';
 
 var websocketSessionID;
 
@@ -51,13 +51,14 @@ function startWebSocketClient() {
 }
 
 function handleWebSocketMessage(data) {
-    console.log(data);
     switch (data.metadata.message_type) {
         case 'session_welcome': // First message you get from the WebSocket server when connecting
             websocketSessionID = data.payload.session.id; // Register the Session ID it gives us
 
             // Listen to EventSub, which joins the chatroom from your bot's account
-            registerEventSubListeners();
+            CHAT_CHANNEL_USER_IDS.map(userId => {
+                registerEventSubListeners(userId);
+            })
             break;
         case 'notification': // An EventSub notification has occurred, such as channel.chat.message
             switch (data.metadata.subscription_type) {
@@ -70,7 +71,7 @@ function handleWebSocketMessage(data) {
     }
 }
 
-async function registerEventSubListeners() {
+async function registerEventSubListeners(userId) {
     // Register channel.chat.message
     let response = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
         method: 'POST',
@@ -83,7 +84,7 @@ async function registerEventSubListeners() {
             type: 'channel.chat.message',
             version: '1',
             condition: {
-                broadcaster_user_id: CHAT_CHANNEL_USER_ID,
+                broadcaster_user_id: userId,
                 user_id: BOT_USER_ID
             },
             transport: {
