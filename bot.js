@@ -51,28 +51,31 @@ function startWebSocketClient() {
 }
 
 function handleWebSocketMessage(data) {
+    console.log(data);
     switch (data.metadata.message_type) {
         case 'session_welcome': // First message you get from the WebSocket server when connecting
             websocketSessionID = data.payload.session.id; // Register the Session ID it gives us
 
             // Listen to EventSub, which joins the chatroom from your bot's account
             CHAT_CHANNEL_USER_IDS.map(userId => {
-                registerEventSubListeners(userId);
+                registerEventSubListeners(userId, 'channel.chat.message');
+                // registerEventSubListeners(userId, 'channel.channel_points_custom_reward_redemption.add');
             })
             break;
         case 'notification': // An EventSub notification has occurred, such as channel.chat.message
             switch (data.metadata.subscription_type) {
                 case 'channel.chat.message':
                     handleChatMessage(data.payload.event);
-
+                    break;
+                case 'channel.channel_points_custom_reward_redemption.add':
+                    console.log(data);
                     break;
             }
             break;
     }
 }
 
-async function registerEventSubListeners(userId) {
-    // Register channel.chat.message
+async function registerEventSubListeners(userId, type) {
     let response = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
         method: 'POST',
         headers: {
@@ -81,7 +84,7 @@ async function registerEventSubListeners(userId) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            type: 'channel.chat.message',
+            type: type,
             version: '1',
             condition: {
                 broadcaster_user_id: userId,
@@ -96,11 +99,11 @@ async function registerEventSubListeners(userId) {
 
     if (response.status != 202) {
         let data = await response.json();
-        console.error("Failed to subscribe to channel.chat.message. API call returned status code " + response.status);
+        console.error(`Failed to subscribe to ${type}. API call returned status code ${response.status}`);
         console.error(data);
         process.exit(1);
     } else {
         const data = await response.json();
-        console.log(`Subscribed to channel.chat.message [${data.data[0].id}]`);
+        console.log(`Subscribed to ${type} [${data.data[0].id}]`);
     }
 }

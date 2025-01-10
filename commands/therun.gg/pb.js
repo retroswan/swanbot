@@ -1,4 +1,5 @@
 import asciiAlphabet from "../../utilities/asciiAlphabet.js";
+import toSlug from "../../utilities/toSlug.js";
 
 export async function getPBMap(user) {
     const leadingZeroes = (n) => {
@@ -36,11 +37,15 @@ export async function getPBMap(user) {
     
     data.map(pb => {
         const game = asciiAlphabet(pb.game);
-        if (!games.has(game)) {
-            games.set(game, new Map());
+        const gameSlug = toSlug(game);
+        if (!games.has(gameSlug)) {
+            games.set(gameSlug, {
+                game,
+                pbs: new Map(),
+            });
         }
         
-        games.get(game).set(pb.run, pbFunc(pb.personalBest));
+        games.get(gameSlug).pbs.set(pb.run, pbFunc(pb.personalBest));
     });
     
     return games;
