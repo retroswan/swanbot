@@ -59,6 +59,7 @@ function handleWebSocketMessage(data) {
             // Listen to EventSub, which joins the chatroom from your bot's account
             CHAT_CHANNEL_USER_IDS.map(userId => {
                 registerEventSubListeners(userId, 'channel.chat.message');
+                // FIXME: get reward redeem permissions working
                 // registerEventSubListeners(userId, 'channel.channel_points_custom_reward_redemption.add');
             })
             break;
